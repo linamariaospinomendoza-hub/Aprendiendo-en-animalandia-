@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🦁 MundoAnimal – Aprende con los Animales</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sky: #87CEEB;
+    --grass: #4CAF50;
+    --sun: #FFD700;
+    --orange: #FF8C00;
+    --pink: #FF69B4;
+    --purple: #9B59B6;
+    --teal: #1ABC9C;
+    --red: #E74C3C;
+    --blue: #3498DB;
+    --cream: #FFF8E7;
+    --brown: #8B4513;
+    --white: #FFFFFF;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(180deg, #87CEEB 0%, #B8E4FF 40%, #C8F7C5 70%, #7EC850 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Ctext y='28' font-size='28'%3E🐾%3C/text%3E%3C/svg%3E"), auto;
+  }
+
+  /* ── Clouds ─────────────────────────────────────────────── */
+  .clouds { position: fixed; top: 0; left: 0; width: 100%; pointer-events: none; z-index: 0; }
+  .cloud {
+    position: absolute;
+    background: rgba(255,255,255,0.9);
+    border-radius: 50px;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,.08));
+  }
+  .cloud::before, .cloud::after {
+    content:''; position:absolute; background:inherit; border-radius:50%;
+  }
+  .c1 { width:120px; height:45px; top:30px; animation: drift 18s linear infinite; left:-130px; }
+  .c1::before { width:70px; height:70px; top:-35px; left:15px; }
+  .c1::after  { width:50px; height:50px; top:-25px; left:55px; }
+  .c2 { width:90px; height:35px; top:80px; animation: drift 25s linear infinite; animation-delay:-8s; left:-100px; }
+  .c2::before { width:55px; height:55px; top:-28px; left:10px; }
+  .c2::after  { width:40px; height:40px; top:-20px; left:40px; }
+  .c3 { width:150px; height:55px; top:15px; animation: drift 30s linear infinite; animation-delay:-15s; left:-160px; }
+  .c3::before { width:80px; height:80px; top:-40px; left:20px; }
+  .c3::after  { width:60px; height:60px; top:-30px; left:70px; }
+  @keyframes drift { to { transform: translateX(110vw); } }
+
+  /* ── Sun ────────────────────────────────────────────────── */
+  .sun {
+    position: fixed; top: 20px; right: 40px; font-size: 64px; z-index: 1;
+    animation: spin-slow 20s linear infinite;
+    filter: drop-shadow(0 0 20px rgba(255,215,0,.8));
+  }
+  @keyframes spin-slow { to { transform: rotate(360deg); } }
+
+  /* ── Hero Header ─────────────────────────────────────────── */
+  header {
+    position: relative; z-index: 10;
+    text-align: center;
+    padding: 40px 20px 20px;
+  }
+
+  .logo-wrap {
+    display: inline-flex; align-items: center; gap: 16px;
+    background: var(--white);
+    border-radius: 40px;
+    padding: 18px 40px;
+    box-shadow: 0 8px 32px rgba(0,0,0,.15), 0 0 0 6px rgba(255,165,0,.3);
+    animation: bounce-in .8s cubic-bezier(.68,-.55,.265,1.55) both;
+  }
+  .logo-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    background: linear-gradient(135deg, #FF6B35, #FFD700, #4CAF50, #3498DB);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 1px;
+  }
+  .logo-animals { font-size: 2.5rem; animation: wiggle 2s ease-in-out infinite; }
+  @keyframes wiggle { 0%,100%{transform:rotate(-8deg)} 50%{transform:rotate(8deg)} }
+  @keyframes bounce-in { 0%{opacity:0;transform:scale(.5)} 100%{opacity:1;transform:scale(1)} }
+
+  .tagline {
+    margin-top: 14px;
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(1rem, 3vw, 1.5rem);
+    color: var(--white);
+    text-shadow: 2px 2px 0 rgba(0,0,0,.2);
+    animation: fade-up .8s .4s both;
+  }
+  @keyframes fade-up { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+
+  /* ── Nav Tabs ─────────────────────────────────────────────── */
+  nav {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 12px;
+    padding: 20px;
+    position: relative; z-index: 10;
+    animation: fade-up .8s .6s both;
+  }
+  .nav-btn {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.1rem;
+    padding: 12px 24px;
+    border: none; border-radius: 50px;
+    cursor: pointer;
+    transition: all .2s;
+    box-shadow: 0 4px 0 rgba(0,0,0,.2);
+    color: white;
+    text-shadow: 1px 1px 0 rgba(0,0,0,.2);
+  }
+  .nav-btn:hover { transform: translateY(-3px); box-shadow: 0 7px 0 rgba(0,0,0,.2); }
+  .nav-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,.2); }
+  .nav-btn.active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,.2); opacity:1; }
+
+  .btn-safari  { background: linear-gradient(135deg,#FF8C00,#FFD700); }
+  .btn-mar     { background: linear-gradient(135deg,#1e90ff,#00CED1); }
+  .btn-granja  { background: linear-gradient(135deg,#4CAF50,#8BC34A); }
+  .btn-selva   { background: linear-gradient(135deg,#2ECC71,#1ABC9C); }
+  .btn-juego   { background: linear-gradient(135deg,#E74C3C,#FF69B4); }
+  .btn-sonidos { background: linear-gradient(135deg,#9B59B6,#3498DB); }
+
+  /* ── Main Wrapper ─────────────────────────────────────────── */
+  main {
+    max-width: 1200px; margin: 0 auto;
+    padding: 0 20px 120px;
+    position: relative; z-index: 10;
+  }
+
+  /* ── Section ──────────────────────────────────────────────── */
+  .section { display: none; animation: fade-up .5s both; }
+  .section.active { display: block; }
+
+  .section-title {
+    font-family: 'Fredoka One', cursive;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    text-align: center;
+    color: var(--white);
+    text-shadow: 3px 3px 0 rgba(0,0,0,.2);
+    margin-bottom: 30px;
+  }
+
+  /* ── Animal Cards ─────────────────────────────────────────── */
+  .cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 24px;
+  }
+
+  .animal-card {
+    background: var(--white);
+    border-radius: 28px;
+    padding: 24px 16px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all .25s cubic-bezier(.34,1.56,.64,1);
+    box-shadow: 0 6px 20px rgba(0,0,0,.12);
+    position: relative;
+    overflow: hidden;
+    border: 3px solid transparent;
+  }
+  .animal-card::before {
+    content: ''; position: absolute; inset: 0;
+    background: inherit; border-radius: inherit; z-index: -1;
+  }
+  .animal-card:hover {
+    transform: translateY(-10px) scale(1.04);
+    box-shadow: 0 18px 40px rgba(0,0,0,.2);
+  }
+  .animal-card:nth-child(1) { border-color: #FFD700; background: linear-gradient(135deg,#fff9e6,#fff); }
+  .animal-card:nth-child(2) { border-color: #FF8C00; background: linear-gradient(135deg,#fff3e0,#fff); }
+  .animal-card:nth-child(3) { border-color: #E74C3C; background: linear-gradient(135deg,#fde8e8,#fff); }
+  .animal-card:nth-child(4) { border-color: #9B59B6; background: linear-gradient(135deg,#f5e8ff,#fff); }
+  .animal-card:nth-child(5) { border-color: #3498DB; background: linear-gradient(135deg,#e8f4ff,#fff); }
+  .animal-card:nth-child(6) { border-color: #1ABC9C; background: linear-gradient(135deg,#e8fff9,#fff); }
+  .animal-card:nth-child(7) { border-color: #FF69B4; background: linear-gradient(135deg,#ffe8f4,#fff); }
+  .animal-card:nth-child(8) { border-color: #4CAF50; background: linear-gradient(135deg,#e8ffe8,#fff); }
+
+  .animal-emoji {
+    font-size: 5rem;
+    display: block;
+    margin-bottom: 10px;
+    transition: transform .2s;
+    filter: drop-shadow(2px 4px 4px rgba(0,0,0,.1));
+  }
+  .animal-card:hover .animal-emoji { transform: scale(1.2) rotate(-5deg); }
+
+  .animal-name {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.4rem;
+    color: #333;
+    margin-bottom: 4px;
+  }
+  .animal-subtitle { font-size: .85rem; color: #888; font-weight: 600; }
+
+  .badge {
+    position: absolute; top: 10px; right: 10px;
+    background: var(--sun); color: #333;
+    font-family: 'Fredoka One', cursive;
+    font-size: .75rem; padding: 3px 10px;
+    border-radius: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,.15);
+  }
+
+  /* ── Modal ────────────────────────────────────────────────── */
+  .modal-overlay {
+    display: none; position: fixed; inset: 0;
+    background: rgba(0,0,0,.55); backdrop-filter: blur(6px);
+    z-index: 1000; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: var(--white); border-radius: 36px;
+    max-width: 520px; width: 100%;
+    padding: 40px 32px 32px;
+    position: relative;
+    animation: pop-in .4s cubic-bezier(.34,1.56,.64,1) both;
+    box-shadow: 0 24px 80px rgba(0,0,0,.3);
+    text-align: center;
+    max-height: 90vh; overflow-y: auto;
+  }
+  @keyframes pop-in { from{opacity:0;transform:scale(.6)} to{opacity:1;transform:scale(1)} }
+
+  .modal-emoji { font-size: 7rem; margin-bottom: 8px; display: block; }
+  .modal-name {
+    font-family: 'Fredoka One', cursive; font-size: 2.4rem;
+    margin-bottom: 4px;
+  }
+  .modal-sound-badge {
+    display: inline-block;
+    background: linear-gradient(135deg,#FF8C00,#FFD700);
+    color: white; border-radius: 20px;
+    padding: 5px 18px; font-family: 'Fredoka One', cursive;
+    font-size: 1rem; margin-bottom: 16px;
+    box-shadow: 0 3px 0 rgba(0,0,0,.15);
+  }
+  .modal-fact {
+    background: linear-gradient(135deg,#f0f9ff,#e8fff0);
+    border-radius: 20px; padding: 18px 20px;
+    font-size: 1.05rem; font-weight: 700; color: #444;
+    line-height: 1.6; margin-bottom: 16px;
+    border-left: 5px solid #3498DB;
+  }
+  .modal-fun {
+    background: linear-gradient(135deg,#fff9e6,#fff0f6);
+    border-radius: 20px; padding: 16px 20px;
+    font-size: 1rem; color: #555;
+    font-weight: 600; line-height: 1.6;
+    border-left: 5px solid #FF69B4;
+    margin-bottom: 20px;
+  }
+  .modal-close {
+    position: absolute; top: 16px; right: 16px;
+    width: 40px; height: 40px; border-radius: 50%;
+    background: #ffe0e0; border: none; cursor: pointer;
+    font-size: 1.4rem; display: flex; align-items: center; justify-content: center;
+    transition: all .2s;
+  }
+  .modal-close:hover { background: var(--red); color: white; transform: rotate(90deg); }
+
+  .sound-btn {
+    font-family: 'Fredoka One', cursive;
+    background: linear-gradient(135deg,#9B59B6,#3498DB);
+    color: white; border: none; border-radius: 50px;
+    padding: 12px 28px; font-size: 1.1rem; cursor: pointer;
+    box-shadow: 0 4px 0 rgba(0,0,0,.2);
+    transition: all .2s;
+    margin-top: 4px;
+  }
+  .sound-btn:hover { transform: translateY(-3px); box-shadow: 0 7px 0 rgba(0,0,0,.2); }
+
+  /* ── Juego de Memoria ─────────────────────────────────────── */
+  .game-area {
+    background: rgba(255,255,255,.9);
+    border-radius: 32px; padding: 32px;
+    box-shadow: 0 10px 40px rgba(0,0,0,.15);
+  }
+  .game-header {
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: 12px; margin-bottom: 24px;
+  }
+  .game-stat {
+    background: linear-gradient(135deg,#FF8C00,#FFD700);
+    border-radius: 20px; padding: 10px 20px;
+    font-family: 'Fredoka One', cursive; font-size: 1.1rem; color: white;
+    box-shadow: 0 3px 0 rgba(0,0,0,.15);
+  }
+  .memory-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    max-width: 500px; margin: 0 auto 24px;
+  }
+  .mem-card {
+    aspect-ratio: 1; border-radius: 18px;
+    cursor: pointer; font-size: 2.8rem;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(135deg,#4CAF50,#8BC34A);
+    box-shadow: 0 4px 0 rgba(0,0,0,.2);
+    transition: all .3s cubic-bezier(.34,1.56,.64,1);
+    user-select: none;
+    border: 3px solid rgba(255,255,255,.5);
+  }
+  .mem-card:hover:not(.flipped):not(.matched) {
+    transform: scale(1.08) rotate(-3deg);
+  }
+  .mem-card .face { display: none; }
+  .mem-card .back { font-size: 2rem; }
+  .mem-card.flipped, .mem-card.matched {
+    background: linear-gradient(135deg,#FFD700,#FF8C00);
+  }
+  .mem-card.flipped .face, .mem-card.matched .face { display: block; }
+  .mem-card.flipped .back, .mem-card.matched .back { display: none; }
+  .mem-card.matched { background: linear-gradient(135deg,#4CAF50,#1ABC9C); animation: matched-pop .4s; }
+  @keyframes matched-pop { 0%,100%{transform:scale(1)} 50%{transform:scale(1.2) rotate(5deg)} }
+
+  .game-btn {
+    font-family: 'Fredoka One', cursive;
+    padding: 12px 32px; border: none; border-radius: 50px;
+    font-size: 1.1rem; cursor: pointer; color: white;
+    box-shadow: 0 4px 0 rgba(0,0,0,.2);
+    transition: all .2s;
+    display: block; margin: 0 auto;
+  }
+  .game-btn:hover { transform: translateY(-3px); }
+  .btn-start { background: linear-gradient(135deg,#E74C3C,#FF69B4); }
+  .btn-restart { background: linear-gradient(135deg,#9B59B6,#3498DB); }
+
+  /* ── Sonidos Section ──────────────────────────────────────── */
+  .sounds-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 20px;
+  }
+  .sound-card {
+    background: var(--white); border-radius: 24px;
+    padding: 24px 16px; text-align: center;
+    cursor: pointer; transition: all .25s cubic-bezier(.34,1.56,.64,1);
+    box-shadow: 0 6px 20px rgba(0,0,0,.12);
+    border: 3px solid transparent;
+  }
+  .sound-card:hover { transform: translateY(-8px) scale(1.05); }
+  .sound-card:active { transform: scale(.95); }
+  .sound-card .icon { font-size: 3.5rem; margin-bottom: 8px; display: block; }
+  .sound-card .name { font-family: 'Fredoka One', cursive; font-size: 1.1rem; color: #333; }
+  .sound-card .sound-text { font-size: .85rem; color: #888; font-weight: 700; margin-top: 4px; }
+  .sound-card.playing {
+    background: linear-gradient(135deg,#FFD700,#FF8C00);
+    border-color: #FF8C00;
+    animation: pulse .5s ease-in-out;
+  }
+  @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.12)} }
+
+  /* ── Grass Footer ─────────────────────────────────────────── */
+  .grass-strip {
+    position: fixed; bottom: 0; left: 0; width: 100%;
+    height: 70px; z-index: 5; pointer-events: none;
+    background: linear-gradient(180deg,#5DBB37 0%,#3A8A20 100%);
+    clip-path: polygon(0 30%,2% 0,4% 25%,6% 5%,8% 28%,10% 0,12% 22%,14% 2%,16% 26%,18% 0,20% 30%,22% 5%,24% 28%,26% 0,28% 25%,30% 3%,32% 30%,34% 8%,36% 28%,38% 0,40% 25%,42% 5%,44% 30%,46% 2%,48% 28%,50% 0,52% 25%,54% 8%,56% 30%,58% 0,60% 28%,62% 5%,64% 25%,66% 0,68% 30%,70% 8%,72% 28%,74% 0,76% 25%,78% 5%,80% 30%,82% 2%,84% 28%,86% 0,88% 25%,90% 8%,92% 30%,94% 0,96% 28%,98% 5%,100% 30%,100% 100%,0 100%);
+  }
+  .animals-walking {
+    position: fixed; bottom: 60px; z-index: 6; pointer-events: none;
+    font-size: 2.4rem; animation: walk 16s linear infinite;
+    filter: drop-shadow(2px 2px 4px rgba(0,0,0,.2));
+  }
+  .aw1 { animation-duration: 16s; left: -80px; }
+  .aw2 { animation-duration: 22s; animation-delay: -8s; left: -80px; bottom: 65px; }
+  @keyframes walk { to { transform: translateX(110vw); } }
+
+  /* ── Chatbot ──────────────────────────────────────────────── */
+  .chat-fab {
+    position: fixed; bottom: 80px; right: 24px; z-index: 100;
+    width: 68px; height: 68px; border-radius: 50%;
+    background: linear-gradient(135deg,#FF8C00,#FFD700);
+    border: none; cursor: pointer; font-size: 2rem;
+    box-shadow: 0 6px 24px rgba(255,140,0,.5);
+    transition: all .3s cubic-bezier(.34,1.56,.64,1);
+    display: flex; align-items: center; justify-content: center;
+    animation: chat-bounce 2s ease-in-out infinite;
+  }
+  .chat-fab:hover { transform: scale(1.15); }
+  @keyframes chat-bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+  .chat-tooltip {
+    position: fixed; bottom: 158px; right: 20px; z-index: 100;
+    background: var(--white); border-radius: 16px;
+    padding: 10px 16px; font-family: 'Fredoka One', cursive;
+    font-size: .95rem; color: #333;
+    box-shadow: 0 4px 16px rgba(0,0,0,.15);
+    white-space: nowrap;
+    animation: fade-up .5s 2s both;
+  }
+  .chat-tooltip::after {
+    content: ''; position: absolute; bottom: -8px; right: 24px;
+    border: 8px solid transparent;
+    border-top-color: white; border-bottom: 0;
+  }
+
+  .chat-panel {
+    display: none; position: fixed; bottom: 160px; right: 20px;
+    width: min(380px, calc(100vw - 40px));
+    height: 560px; z-index: 200;
+    border-radius: 28px; overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,.3);
+    animation: slide-up .4s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  .chat-panel.open { display: block; }
+  @keyframes slide-up { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+  .chat-panel iframe { width: 100%; height: 100%; border: none; }
+
+  /* ── Creators ─────────────────────────────────────────────── */
+  .creators {
+    position: fixed; bottom: 75px; left: 0; right: 0;
+    text-align: center; z-index: 6;
+    font-family: 'Fredoka One', cursive;
+    font-size: .8rem; color: rgba(255,255,255,.85);
+    text-shadow: 1px 1px 2px rgba(0,0,0,.3);
+    pointer-events: none;
+  }
+
+  /* ── Stars decoration ─────────────────────────────────────── */
+  .star {
+    position: fixed; pointer-events: none; z-index: 0;
+    animation: twinkle 3s ease-in-out infinite;
+    opacity: .6;
+  }
+  @keyframes twinkle { 0%,100%{opacity:.3;transform:scale(.8)} 50%{opacity:1;transform:scale(1.2)} }
+
+  /* ── Confetti ─────────────────────────────────────────────── */
+  .confetti-piece {
+    position: fixed; z-index: 999; pointer-events: none;
+    border-radius: 3px; animation: confetti-fall linear forwards;
+  }
+  @keyframes confetti-fall {
+    0% { transform: translateY(-10px) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* ── Responsive ───────────────────────────────────────────── */
+  @media (max-width: 600px) {
+    .memory-grid { grid-template-columns: repeat(4,1fr); gap: 8px; }
+    .mem-card { font-size: 2rem; border-radius: 12px; }
+    .cards-grid { grid-template-columns: repeat(2,1fr); gap: 14px; }
+    .sounds-grid { grid-template-columns: repeat(2,1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Decoraciones -->
+<div class="clouds">
+  <div class="cloud c1"></div>
+  <div class="cloud c2"></div>
+  <div class="cloud c3"></div>
+</div>
+<div class="sun">☀️</div>
+<div class="star" style="top:15%;left:8%;font-size:1.4rem;animation-delay:0s">⭐</div>
+<div class="star" style="top:25%;left:92%;font-size:1rem;animation-delay:1s">✨</div>
+<div class="star" style="top:60%;left:5%;font-size:1.2rem;animation-delay:2s">🌟</div>
+<div class="animals-walking aw1">🦁</div>
+<div class="animals-walking aw2">🐘</div>
+<div class="grass-strip"></div>
+
+<!-- HEADER -->
+<header>
+  <div class="logo-wrap">
+    <span class="logo-animals">🦁🐘🦋</span>
+    <h1 class="logo-title">MundoAnimal</h1>
+  </div>
+  <p class="tagline">🌈 ¡Conoce a tus amigos animales y diviértete aprendiendo! 🌈</p>
+</header>
+
+<!-- NAVEGACIÓN -->
+<nav>
+  <button class="nav-btn btn-safari active" onclick="showSection('safari')">🦁 Safari</button>
+  <button class="nav-btn btn-mar"    onclick="showSection('mar')">🐬 Mar</button>
+  <button class="nav-btn btn-granja" onclick="showSection('granja')">🐄 Granja</button>
+  <button class="nav-btn btn-selva"  onclick="showSection('selva')">🐒 Selva</button>
+  <button class="nav-btn btn-juego"  onclick="showSection('juego')">🎮 Juego</button>
+  <button class="nav-btn btn-sonidos" onclick="showSection('sonidos')">🔊 Sonidos</button>
+</nav>
+
+<main>
+
+  <!-- ── SAFARI ─────────────────────────────────────────────── -->
+  <section id="safari" class="section active">
+    <h2 class="section-title">🦁 Animales del Safari</h2>
+    <div class="cards-grid">
+      <div class="animal-card" onclick="openModal('leon')">
+        <span class="badge">¡Rugido!</span>
+        <span class="animal-emoji">🦁</span>
+        <p class="animal-name">León</p>
+        <p class="animal-subtitle">El rey de la sabana</p>
+      </div>
+      <div class="animal-card" onclick="openModal('elefante')">
+        <span class="badge">¡El más grande!</span>
+        <span class="animal-emoji">🐘</span>
+        <p class="animal-name">Elefante</p>
+        <p class="animal-subtitle">Memorioso y amigable</p>
+      </div>
+      <div class="animal-card" onclick="openModal('jirafa')">
+        <span class="badge">¡Cuello largo!</span>
+        <span class="animal-emoji">🦒</span>
+        <p class="animal-name">Jirafa</p>
+        <p class="animal-subtitle">La más alta del mundo</p>
+      </div>
+      <div class="animal-card" onclick="openModal('cebra')">
+        <span class="badge">¡A rayas!</span>
+        <span class="animal-emoji">🦓</span>
+        <p class="animal-name">Cebra</p>
+        <p class="animal-subtitle">Pijamas naturales</p>
+      </div>
+      <div class="animal-card" onclick="openModal('rinoceronte')">
+        <span class="badge">¡Cuerno poderoso!</span>
+        <span class="animal-emoji">🦏</span>
+        <p class="animal-name">Rinoceronte</p>
+        <p class="animal-subtitle">Súper fuerte</p>
+      </div>
+      <div class="animal-card" onclick="openModal('hipopotamo')">
+        <span class="badge">¡Bocaza!</span>
+        <span class="animal-emoji">🦛</span>
+        <p class="animal-name">Hipopótamo</p>
+        <p class="animal-subtitle">Le encanta el agua</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── MAR ───────────────────────────────────────────────── -->
+  <section id="mar" class="section">
+    <h2 class="section-title">🌊 Animales del Mar</h2>
+    <div class="cards-grid">
+      <div class="animal-card" onclick="openModal('delfin')">
+        <span class="badge">¡Muy listo!</span>
+        <span class="animal-emoji">🐬</span>
+        <p class="animal-name">Delfín</p>
+        <p class="animal-subtitle">El más inteligente</p>
+      </div>
+      <div class="animal-card" onclick="openModal('tiburon')">
+        <span class="badge">¡Dientes afilados!</span>
+        <span class="animal-emoji">🦈</span>
+        <p class="animal-name">Tiburón</p>
+        <p class="animal-subtitle">El guardián del mar</p>
+      </div>
+      <div class="animal-card" onclick="openModal('pulpo')">
+        <span class="badge">¡8 brazos!</span>
+        <span class="animal-emoji">🐙</span>
+        <p class="animal-name">Pulpo</p>
+        <p class="animal-subtitle">Maestro del disfraz</p>
+      </div>
+      <div class="animal-card" onclick="openModal('cangrejo')">
+        <span class="badge">¡Pinzas!</span>
+        <span class="animal-emoji">🦀</span>
+        <p class="animal-name">Cangrejo</p>
+        <p class="animal-subtitle">Camina de lado</p>
+      </div>
+      <div class="animal-card" onclick="openModal('ballena')">
+        <span class="badge">¡El más grande!</span>
+        <span class="animal-emoji">🐳</span>
+        <p class="animal-name">Ballena</p>
+        <p class="animal-subtitle">Canta bajo el agua</p>
+      </div>
+      <div class="animal-card" onclick="openModal('pez')">
+        <span class="badge">¡Colorido!</span>
+        <span class="animal-emoji">🐠</span>
+        <p class="animal-name">Pez Payaso</p>
+        <p class="animal-subtitle">Vive en el arrecife</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── GRANJA ─────────────────────────────────────────────── -->
+  <section id="granja" class="section">
+    <h2 class="section-title">🌾 Animales de la Granja</h2>
+    <div class="cards-grid">
+      <div class="animal-card" onclick="openModal('vaca')">
+        <span class="badge">¡Muuu!</span>
+        <span class="animal-emoji">🐄</span>
+        <p class="animal-name">Vaca</p>
+        <p class="animal-subtitle">Nos da leche rica</p>
+      </div>
+      <div class="animal-card" onclick="openModal('cerdo')">
+        <span class="badge">¡Oink!</span>
+        <span class="animal-emoji">🐷</span>
+        <p class="animal-name">Cerdito</p>
+        <p class="animal-subtitle">Le encanta el barro</p>
+      </div>
+      <div class="animal-card" onclick="openModal('gallina')">
+        <span class="badge">¡Pio pio!</span>
+        <span class="animal-emoji">🐔</span>
+        <p class="animal-name">Gallina</p>
+        <p class="animal-subtitle">Pone los huevos</p>
+      </div>
+      <div class="animal-card" onclick="openModal('caballo')">
+        <span class="badge">¡Galopando!</span>
+        <span class="animal-emoji">🐴</span>
+        <p class="animal-name">Caballo</p>
+        <p class="animal-subtitle">Corre muy rápido</p>
+      </div>
+      <div class="animal-card" onclick="openModal('oveja')">
+        <span class="badge">¡Beee!</span>
+        <span class="animal-emoji">🐑</span>
+        <p class="animal-name">Oveja</p>
+        <p class="animal-subtitle">Nos da la lana</p>
+      </div>
+      <div class="animal-card" onclick="openModal('pato')">
+        <span class="badge">¡Cuac cuac!</span>
+        <span class="animal-emoji">🦆</span>
+        <p class="animal-name">Pato</p>
+        <p class="animal-subtitle">Nada y vuela</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── SELVA ──────────────────────────────────────────────── -->
+  <section id="selva" class="section">
+    <h2 class="section-title">🌿 Animales de la Selva</h2>
+    <div class="cards-grid">
+      <div class="animal-card" onclick="openModal('mono')">
+        <span class="badge">¡Saltarín!</span>
+        <span class="animal-emoji">🐒</span>
+        <p class="animal-name">Mono</p>
+        <p class="animal-subtitle">Trepa y juega</p>
+      </div>
+      <div class="animal-card" onclick="openModal('loro')">
+        <span class="badge">¡Habla!</span>
+        <span class="animal-emoji">🦜</span>
+        <p class="animal-name">Loro</p>
+        <p class="animal-subtitle">Repite todo lo que oye</p>
+      </div>
+      <div class="animal-card" onclick="openModal('serpiente')">
+        <span class="badge">¡Sssss!</span>
+        <span class="animal-emoji">🐍</span>
+        <p class="animal-name">Serpiente</p>
+        <p class="animal-subtitle">Se arrastra sin patas</p>
+      </div>
+      <div class="animal-card" onclick="openModal('mariposa')">
+        <span class="badge">¡Vuela!</span>
+        <span class="animal-emoji">🦋</span>
+        <p class="animal-name">Mariposa</p>
+        <p class="animal-subtitle">Las alas más bellas</p>
+      </div>
+      <div class="animal-card" onclick="openModal('rana')">
+        <span class="badge">¡Ribbit!</span>
+        <span class="animal-emoji">🐸</span>
+        <p class="animal-name">Rana</p>
+        <p class="animal-subtitle">Salta muy lejos</p>
+      </div>
+      <div class="animal-card" onclick="openModal('tigre')">
+        <span class="badge">¡Rawr!</span>
+        <span class="animal-emoji">🐯</span>
+        <p class="animal-name">Tigre</p>
+        <p class="animal-subtitle">El corredor veloz</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── JUEGO ──────────────────────────────────────────────── -->
+  <section id="juego" class="section">
+    <h2 class="section-title">🎮 Juego de Memoria</h2>
+    <div class="game-area">
+      <div class="game-header">
+        <div class="game-stat">⭐ Pares: <span id="pairs">0</span>/8</div>
+        <div class="game-stat">🔄 Intentos: <span id="tries">0</span></div>
+        <div class="game-stat">🏆 Mejor: <span id="best">--</span></div>
+      </div>
+      <div class="memory-grid" id="memGrid"></div>
+      <button class="game-btn btn-start" onclick="startGame()">🎯 ¡Jugar!</button>
+    </div>
+  </section>
+
+  <!-- ── SONIDOS ─────────────────────────────────────────────── -->
+  <section id="sonidos" class="section">
+    <h2 class="section-title">🔊 ¿Cómo hacen los animales?</h2>
+    <div class="sounds-grid">
+      <div class="sound-card" id="sc-leon"   onclick="playSound('leon')">
+        <span class="icon">🦁</span><p class="name">León</p><p class="sound-text">ROAR!</p></div>
+      <div class="sound-card" id="sc-vaca"   onclick="playSound('vaca')">
+        <span class="icon">🐄</span><p class="name">Vaca</p><p class="sound-text">MUUUU!</p></div>
+      <div class="sound-card" id="sc-pato"   onclick="playSound('pato')">
+        <span class="icon">🦆</span><p class="name">Pato</p><p class="sound-text">¡CUAC!</p></div>
+      <div class="sound-card" id="sc-gallina" onclick="playSound('gallina')">
+        <span class="icon">🐔</span><p class="name">Gallina</p><p class="sound-text">¡PIO PIO!</p></div>
+      <div class="sound-card" id="sc-elefante" onclick="playSound('elefante')">
+        <span class="icon">🐘</span><p class="name">Elefante</p><p class="sound-text">BRAAAH!</p></div>
+      <div class="sound-card" id="sc-rana"   onclick="playSound('rana')">
+        <span class="icon">🐸</span><p class="name">Rana</p><p class="sound-text">RIBBIT!</p></div>
+      <div class="sound-card" id="sc-cerdo"  onclick="playSound('cerdo')">
+        <span class="icon">🐷</span><p class="name">Cerdito</p><p class="sound-text">¡OINK!</p></div>
+      <div class="sound-card" id="sc-caballo" onclick="playSound('caballo')">
+        <span class="icon">🐴</span><p class="name">Caballo</p><p class="sound-text">¡HIIIII!</p></div>
+      <div class="sound-card" id="sc-oveja"  onclick="playSound('oveja')">
+        <span class="icon">🐑</span><p class="name">Oveja</p><p class="sound-text">¡BEEE!</p></div>
+      <div class="sound-card" id="sc-mono"   onclick="playSound('mono')">
+        <span class="icon">🐒</span><p class="name">Mono</p><p class="sound-text">¡UUU AAA!</p></div>
+      <div class="sound-card" id="sc-serpiente" onclick="playSound('serpiente')">
+        <span class="icon">🐍</span><p class="name">Serpiente</p><p class="sound-text">SSSSS...</p></div>
+      <div class="sound-card" id="sc-delfin" onclick="playSound('delfin')">
+        <span class="icon">🐬</span><p class="name">Delfín</p><p class="sound-text">¡CLICK CLICK!</p></div>
+    </div>
+  </section>
+
+</main>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal" id="modal">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <span class="modal-emoji" id="mEmoji"></span>
+    <p class="modal-name" id="mName"></p>
+    <div class="modal-sound-badge" id="mSound"></div>
+    <div class="modal-fact" id="mFact"></div>
+    <div class="modal-fun" id="mFun"></div>
+    <button class="sound-btn" id="mSoundBtn" onclick="playSoundModal()">🔊 ¡Escucha su sonido!</button>
+  </div>
+</div>
+
+<!-- CHATBOT FAB -->
+<div class="chat-tooltip">💬 ¡Pregúntame sobre animales!</div>
+<button class="chat-fab" onclick="toggleChat()" title="Abrir chatbot">🦁</button>
+<div class="chat-panel" id="chatPanel">
+  <iframe
+    src="https://www.jotform.com/agent/019e0a6569547febafd2453a1f91d01e03dc"
+    allow="microphone; camera"
+    title="Chatbot MundoAnimal">
+  </iframe>
+</div>
+
+<!-- CREADORES -->
+<div class="creators">
+  ✨ Creado por: Luis Ibáñez · Lina Ospino · Ana Pacheco · Mellani Manotas ✨
+</div>
+
+<script>
+// ── DATA ─────────────────────────────────────────────────────
+const animals = {
+  leon:       { e:'🦁', n:'León',         s:'¡ROAR! 🦁',      f:'El león es el rey de la sabana. Vive en África y duerme ¡hasta 20 horas al día! 😴', fun:'Los leones son los únicos gatos que viven en familia. El grupo se llama "manada". 🌟', sound:'leon' },
+  elefante:   { e:'🐘', n:'Elefante',     s:'¡BRAAAH! 🐘',    f:'El elefante es el animal terrestre más grande del mundo. ¡Su nariz se llama trompa y puede beber hasta 200 litros de agua! 💧', fun:'Los elefantes tienen muy buena memoria. ¡Nunca olvidan a sus amigos! 🧠', sound:'elefante' },
+  jirafa:     { e:'🦒', n:'Jirafa',       s:'¡Silencio! 🦒',   f:'La jirafa es el animal más alto del mundo. ¡Su cuello puede medir 2 metros! Come hojas de los árboles más altos. 🌳', fun:'Las jirafas solo duermen 30 minutos al día. ¡Y de pie! 😲', sound:null },
+  cebra:      { e:'🦓', n:'Cebra',        s:'¡Hiii! 🦓',       f:'Cada cebra tiene rayas únicas, ¡como tus huellas digitales! Las rayas las ayudan a esconderse de los enemigos. 🖤🤍', fun:'Las cebras se duermen paradas para salir corriendo rápido si hay peligro. 🏃', sound:null },
+  rinoceronte:{ e:'🦏', n:'Rinoceronte',  s:'¡GRRR! 🦏',       f:'El rinoceronte tiene un cuerno enorme en la nariz. ¡Puede pesar tanto como 3 autos! Es muy fuerte. 💪', fun:'Los rinocerontes se revuelcan en el barro para refrescarse y protegerse del sol. 🌞', sound:null },
+  hipopotamo: { e:'🦛', n:'Hipopótamo',   s:'¡GRUNT! 🦛',      f:'El hipopótamo pasa la mayor parte del día en el agua para no quemarse con el sol. ¡Es buen nadador! 🏊', fun:'Los hipopótamos sudan un líquido rosado que los protege del sol. ¡Su propia crema solar! 🌺', sound:null },
+  delfin:     { e:'🐬', n:'Delfín',       s:'¡Click click! 🐬', f:'El delfín es uno de los animales más inteligentes. Se comunica con sonidos especiales y le encanta jugar con las olas. 🌊', fun:'Los delfines duermen con un ojo abierto para estar siempre alerta. 👁️', sound:'delfin' },
+  tiburon:    { e:'🦈', n:'Tiburón',      s:'¡SNAP! 🦈',       f:'El tiburón es el guardián del mar. ¡Tiene 300 dientes y puede oler una gota de sangre a muchos kilómetros! 🦷', fun:'Los tiburones existen desde antes que los dinosaurios. ¡Son súper antiguos! 🦕', sound:null },
+  pulpo:      { e:'🐙', n:'Pulpo',        s:'¡Glub glub! 🐙',  f:'El pulpo tiene 8 brazos llamados tentáculos. ¡Puede cambiar de color para esconderse entre las rocas! 🎨', fun:'El pulpo tiene 3 corazones y su sangre es de color azul. 💙', sound:null },
+  cangrejo:   { e:'🦀', n:'Cangrejo',     s:'¡Click click! 🦀', f:'El cangrejo siempre camina hacia los lados. ¡Tiene dos pinzas muy fuertes para agarrar su comida! ✂️', fun:'Los cangrejos tienen los ojos en la punta de unos palitos. ¡Pueden mirar para todos lados! 👀', sound:null },
+  ballena:    { e:'🐳', n:'Ballena',      s:'¡Whoooosh! 🐳',   f:'La ballena azul es el animal más grande que ha existido. ¡Su corazón es tan grande como un auto! ❤️', fun:'Las ballenas cantan canciones bajo el agua para comunicarse. ¡Sus canciones duran horas! 🎵', sound:null },
+  pez:        { e:'🐠', n:'Pez Payaso',   s:'¡Burbuja burbuja! 🐠', f:'El pez payaso vive entre las anémonas del arrecife de coral. Es anaranjado con rayas blancas y negras. 🧡', fun:'El pez payaso nace macho y puede convertirse en hembra. ¡La naturaleza es increíble! 🌈', sound:null },
+  vaca:       { e:'🐄', n:'Vaca',         s:'¡MUUUU! 🐄',      f:'La vaca nos da la leche con la que se hace el queso, el yogur y el helado. ¡Gracias, vaquita! 🥛', fun:'Las vacas tienen 4 estómagos para digerir mejor el pasto. ¡Son increíbles! 🌿', sound:'vaca' },
+  cerdo:      { e:'🐷', n:'Cerdito',      s:'¡OINK OINK! 🐷',  f:'Los cerdos son muy inteligentes. ¡Les encanta revolcarse en el barro para refrescarse! 🌊', fun:'Los cerdos no tienen glándulas sudoríparas, por eso se revuelcan en el barro para enfriarse. 🤔', sound:'cerdo' },
+  gallina:    { e:'🐔', n:'Gallina',      s:'¡PIO PIO! 🐔',    f:'La gallina pone los huevos que comemos en el desayuno. ¡Una gallina puede poner hasta 300 huevos al año! 🥚', fun:'Las gallinas hablan entre ellas con más de 30 sonidos diferentes. ¡Tienen su propio idioma! 🗣️', sound:'gallina' },
+  caballo:    { e:'🐴', n:'Caballo',      s:'¡HIIIII! 🐴',     f:'El caballo puede correr muy rápido. ¡Duerme de pie y sus bebés aprenden a caminar al nacer! 🌟', fun:'Los caballos se comunican con sus orejas. Si las mueven hacia adelante, están felices. 👂', sound:'caballo' },
+  oveja:      { e:'🐑', n:'Oveja',        s:'¡BEEE BEEE! 🐑',  f:'La oveja nos da la lana con la que se hacen los suéteres. ¡Hay que cortarle la lana como cortar el cabello! ✂️', fun:'Las ovejas reconocen hasta 50 caras de otros animales y las recuerdan por años. 🐑', sound:'oveja' },
+  pato:       { e:'🦆', n:'Pato',         s:'¡CUAC CUAC! 🦆',  f:'El pato puede nadar, caminar y volar. ¡Sus plumas tienen aceite especial para que el agua resbale! 💧', fun:'Los patitos nacen sabiendo nadar. ¡El primer día ya están en el agua! 🏊', sound:'pato' },
+  mono:       { e:'🐒', n:'Mono',         s:'¡UUU AAA! 🐒',    f:'El mono vive en los árboles de la selva. ¡Le encanta comer bananas y puede usar sus manos como nosotros! 🍌', fun:'Los monos se limpian unos a otros el pelo para hacerse amigos. ¡Es su abrazo! 🤝', sound:'mono' },
+  loro:       { e:'🦜', n:'Loro',         s:'¡Hola hola! 🦜',  f:'El loro puede aprender a repetir palabras humanas. ¡Tiene plumas de todos los colores del arcoíris! 🌈', fun:'Los loros más inteligentes pueden aprender más de 100 palabras. ¡Son genios! 🧠', sound:null },
+  serpiente:  { e:'🐍', n:'Serpiente',    s:'¡SSSSSSS! 🐍',    f:'La serpiente no tiene patas y se arrastra por el suelo. ¡Muda su piel cuando crece! 🔄', fun:'Las serpientes sienten las vibraciones del suelo con la lengua bífida. ¡Su lengua es su nariz! 👅', sound:'serpiente' },
+  mariposa:   { e:'🦋', n:'Mariposa',     s:'¡Silencio... 🦋', f:'La mariposa empieza siendo oruga, hace un capullo y sale ¡convertida en mariposa! Se llama metamorfosis. 🔄', fun:'Las mariposas prueban los sabores con sus patas. ¡Caminan para probar la comida! 🦶', sound:null },
+  rana:       { e:'🐸', n:'Rana',         s:'¡RIBBIT! 🐸',     f:'La rana puede saltar 20 veces la longitud de su cuerpo. ¡Empieza siendo renacuajo y se convierte en rana! 🔄', fun:'Las ranas beben agua a través de la piel, no de la boca. ¡Se "bañan" para tomar agua! 💧', sound:'rana' },
+  tigre:      { e:'🐯', n:'Tigre',        s:'¡RAWRR! 🐯',      f:'El tigre es el felino más grande del mundo. ¡Sus rayas son únicas, no hay dos tigres iguales! 🖤🟠', fun:'Los tigres aman el agua y son excelentes nadadores. ¡A diferencia de los gatos comunes! 🏊', sound:null },
+};
+
+// ── SONIDOS SINTÉTICOS con Web Audio ────────────────────────
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+let ctx;
+function getCtx() { if (!ctx) ctx = new AudioCtx(); return ctx; }
+
+function makeTone(freq, type='sine', dur=0.4, vol=0.4) {
+  const c = getCtx();
+  const o = c.createOscillator();
+  const g = c.createGain();
+  o.connect(g); g.connect(c.destination);
+  o.type = type; o.frequency.setValueAtTime(freq, c.currentTime);
+  g.gain.setValueAtTime(vol, c.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + dur);
+  o.start(); o.stop(c.currentTime + dur);
+}
+
+function makeNoise(dur=0.3) {
+  const c = getCtx();
+  const buf = c.createBuffer(1, c.sampleRate * dur, c.sampleRate);
+  const d = buf.getChannelData(0);
+  for (let i=0;i<d.length;i++) d[i] = Math.random()*2-1;
+  const src = c.createBufferSource();
+  const g = c.createGain(); const f = c.createBiquadFilter();
+  src.buffer = buf; f.type = 'bandpass'; f.frequency.value = 300;
+  src.connect(f); f.connect(g); g.connect(c.destination);
+  g.gain.setValueAtTime(.3, c.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + dur);
+  src.start(); src.stop(c.currentTime + dur);
+}
+
+const soundMap = {
+  leon:       () => { makeTone(120,'sawtooth',.6,.5); setTimeout(()=>makeTone(80,'sawtooth',.8,.5),200); },
+  vaca:       () => { makeTone(160,'sine',.3,.4); setTimeout(()=>makeTone(140,'sine',.6,.4),200); },
+  pato:       () => { makeTone(400,'square',.15,.3); setTimeout(()=>makeTone(350,'square',.15,.3),200); setTimeout(()=>makeTone(400,'square',.15,.3),400); },
+  gallina:    () => { [300,350,300,400,300].forEach((f,i)=>setTimeout(()=>makeTone(f,'square',.12,.25),i*120)); },
+  elefante:   () => { makeTone(250,'sawtooth',.1,.4); setTimeout(()=>makeTone(200,'sawtooth',.8,.5),100); },
+  rana:       () => { makeTone(600,'square',.12,.3); setTimeout(()=>makeTone(500,'square',.2,.3),180); },
+  cerdo:      () => { makeTone(350,'sawtooth',.15,.3); setTimeout(()=>makeNoise(.15),150); setTimeout(()=>makeTone(320,'sawtooth',.2,.3),300); },
+  caballo:    () => { [400,380,350,320,300,280].forEach((f,i)=>setTimeout(()=>makeTone(f,'triangle',.1,.35),i*80)); },
+  oveja:      () => { makeTone(280,'sine',.2,.4); setTimeout(()=>makeTone(260,'sine',.6,.4),150); },
+  mono:       () => { [500,600,500,700,600].forEach((f,i)=>setTimeout(()=>makeTone(f,'triangle',.1,.3),i*150)); },
+  serpiente:  () => { makeNoise(.8); },
+  delfin:     () => { [800,900,1000,900,800,700,800].forEach((f,i)=>setTimeout(()=>makeTone(f,'sine',.08,.3),i*80)); },
+};
+
+let currentSoundAnimal = null;
+function playSound(animal) {
+  const fn = soundMap[animal]; if (!fn) return;
+  fn();
+  // Visual feedback
+  const card = document.getElementById('sc-'+animal);
+  if (card) { card.classList.add('playing'); setTimeout(()=>card.classList.remove('playing'), 800); }
+  // Confetti burst
+  confettiBurst();
+}
+function playSoundModal() {
+  if (currentSoundAnimal) playSound(currentSoundAnimal);
+  else { makeTone(440,'sine',.3,.3); setTimeout(()=>makeTone(550,'sine',.3,.3),200); }
+}
+
+// ── MODAL ─────────────────────────────────────────────────────
+function openModal(key) {
+  const a = animals[key]; if (!a) return;
+  document.getElementById('mEmoji').textContent = a.e;
+  document.getElementById('mName').textContent  = a.n;
+  document.getElementById('mSound').textContent = a.s;
+  document.getElementById('mFact').innerHTML    = '📖 ' + a.f;
+  document.getElementById('mFun').innerHTML     = '💡 Dato curioso: ' + a.fun;
+  const btn = document.getElementById('mSoundBtn');
+  if (soundMap[a.sound]) { btn.style.display='inline-block'; currentSoundAnimal=a.sound; }
+  else { btn.style.display='none'; currentSoundAnimal=null; }
+  document.getElementById('modalOverlay').classList.add('open');
+  // play sound on open
+  if (soundMap[a.sound]) setTimeout(()=>playSound(a.sound),300);
+}
+function closeModal(e) {
+  if (e && e.target !== document.getElementById('modalOverlay') && !e.target.classList.contains('modal-close')) return;
+  document.getElementById('modalOverlay').classList.remove('open');
+}
+
+// ── NAVIGATION ─────────────────────────────────────────────────
+function showSection(id) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ── MEMORY GAME ─────────────────────────────────────────────────
+const gameEmojis = ['🦁','🐘','🦒','🦓','🐬','🐄','🐷','🦋'];
+let flipped=[], matched=0, tries=0, canFlip=true, best=null;
+
+function startGame() {
+  const grid = document.getElementById('memGrid');
+  grid.innerHTML = '';
+  flipped=[]; matched=0; tries=0; canFlip=true;
+  document.getElementById('pairs').textContent='0';
+  document.getElementById('tries').textContent='0';
+
+  const pairs = [...gameEmojis,...gameEmojis].sort(()=>Math.random()-.5);
+  pairs.forEach((em,i)=>{
+    const card = document.createElement('div');
+    card.className='mem-card';
+    card.dataset.val=em; card.dataset.idx=i;
+    card.innerHTML=`<span class="face">${em}</span><span class="back">🐾</span>`;
+    card.addEventListener('click',()=>flipCard(card));
+    grid.appendChild(card);
+  });
+  document.querySelector('.game-btn').textContent='🔄 Reiniciar';
+  document.querySelector('.game-btn').className='game-btn btn-restart';
+  document.querySelector('.game-btn').onclick=startGame;
+}
+
+function flipCard(card) {
+  if (!canFlip || card.classList.contains('flipped') || card.classList.contains('matched')) return;
+  card.classList.add('flipped');
+  makeTone(440,'sine',.08,.2);
+  flipped.push(card);
+  if (flipped.length===2) {
+    tries++;
+    document.getElementById('tries').textContent=tries;
+    canFlip=false;
+    setTimeout(checkMatch, 700);
+  }
+}
+
+function checkMatch() {
+  const [a,b]=flipped;
+  if (a.dataset.val===b.dataset.val) {
+    a.classList.add('matched'); b.classList.add('matched');
+    matched++;
+    document.getElementById('pairs').textContent=matched;
+    makeTone(600,'sine',.1,.3); setTimeout(()=>makeTone(800,'sine',.1,.3),100);
+    if (matched===8) {
+      if (!best || tries < best) { best=tries; document.getElementById('best').textContent=tries+' intentos'; }
+      setTimeout(()=>{ confettiBurst(); confettiBurst(); setTimeout(confettiBurst,400); alert(`🎉 ¡Increíble! Encontraste todos los pares en ${tries} intentos. ¡Eres un campeón! 🏆`); },400);
+    }
+  } else {
+    a.classList.remove('flipped'); b.classList.remove('flipped');
+    makeTone(200,'sawtooth',.15,.2);
+  }
+  flipped=[]; canFlip=true;
+}
+
+// ── CHATBOT TOGGLE ───────────────────────────────────────────
+function toggleChat() {
+  const panel = document.getElementById('chatPanel');
+  panel.classList.toggle('open');
+  document.querySelector('.chat-tooltip').style.display = panel.classList.contains('open') ? 'none' : 'block';
+}
+
+// ── CONFETTI ─────────────────────────────────────────────────
+function confettiBurst() {
+  const colors=['#FFD700','#FF69B4','#4CAF50','#3498DB','#FF8C00','#9B59B6'];
+  for (let i=0;i<18;i++) {
+    const c=document.createElement('div');
+    c.className='confetti-piece';
+    c.style.cssText=`
+      left:${Math.random()*100}vw; top:${Math.random()*30}vh;
+      width:${6+Math.random()*8}px; height:${6+Math.random()*8}px;
+      background:${colors[Math.floor(Math.random()*colors.length)]};
+      animation-duration:${1.5+Math.random()*1.5}s;
+      animation-delay:${Math.random()*0.5}s;
+      transform:rotate(${Math.random()*360}deg);
+    `;
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(), 3000);
+  }
+}
+
+// ── INIT ─────────────────────────────────────────────────────
+window.addEventListener('load', () => {
+  // Safari section active on load
+  document.getElementById('safari').classList.add('active');
+  // Hide tooltip after 5s
+  setTimeout(()=>{
+    const tip = document.querySelector('.chat-tooltip');
+    if(tip) tip.style.opacity='0';
+  }, 5000);
+});
+</script>
+</body>
+</html>
